@@ -41,6 +41,10 @@ function Modal() {
       backdrop.classList.add("show");
     }, 0);
 
+    // Disable page scroll when modal is open
+    document.body.classList.add('no-scroll');
+    document.body.style.paddingRight = getScrollbarWidth() + "px";
+
     // Attach event listener to close button
     closeButton.addEventListener('click', () => {
       this.closeModal(backdrop);
@@ -60,9 +64,6 @@ function Modal() {
       }
     });
 
-    // Disable page scroll when modal is open
-    document.body.classList.add('no-scroll');
-
     return backdrop;
   };
 
@@ -73,6 +74,7 @@ function Modal() {
 
       // Enable page scroll when modal is closed
       document.body.classList.remove('no-scroll');
+      document.body.style.paddingRight = "";
     });
   }
 
@@ -119,4 +121,23 @@ $("#open-modal-2").onclick = () => {
 // 3. Không cho phép cuộn trang khi modal hiển thị
 
 
+// console.log(box.clientWidth); // độ rộng không bao gồm cuộn
+// console.log(box.offsetWidth); // độ rộng bao gồm cuộn
 
+function getScrollbarWidth() {
+  const div = document.createElement('div');
+  Object.assign(div.style, {
+    overflowY: 'scroll',
+    position: 'absolute',
+    top: '-9999px',
+  }); 
+
+
+  document.body.appendChild(div);
+
+  const scrollbarWidth = div.offsetWidth - div.clientWidth;
+
+  document.body.removeChild(div);
+
+  return scrollbarWidth;
+}
