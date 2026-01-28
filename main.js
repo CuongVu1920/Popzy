@@ -4,6 +4,33 @@ const $$ = document.querySelectorAll.bind(document);
 
 
 function Modal() {
+  function getScrollbarWidth() {
+    if(getScrollbarWidth.value) {
+      console.log("trả về giá trị đã lưu");
+      
+
+      return getScrollbarWidth.value;
+    }    
+
+    const div = document.createElement('div');
+    Object.assign(div.style, {
+      overflowY: 'scroll',
+      position: 'absolute',
+      top: '-9999px',
+    }); 
+
+    document.body.appendChild(div);
+    const scrollbarWidth = div.offsetWidth - div.clientWidth;
+    document.body.removeChild(div);
+
+    getScrollbarWidth.value = scrollbarWidth;
+    console.log("Tính toán kích thước thanh cuộn", scrollbarWidth);
+    
+
+    return scrollbarWidth;
+  }
+
+
   this.openModal = (option = {}) => {
     const { templateId, allowBackdropClose = true } = option;    
     const template = $(`#${templateId}`);
@@ -124,20 +151,3 @@ $("#open-modal-2").onclick = () => {
 // console.log(box.clientWidth); // độ rộng không bao gồm cuộn
 // console.log(box.offsetWidth); // độ rộng bao gồm cuộn
 
-function getScrollbarWidth() {
-  const div = document.createElement('div');
-  Object.assign(div.style, {
-    overflowY: 'scroll',
-    position: 'absolute',
-    top: '-9999px',
-  }); 
-
-
-  document.body.appendChild(div);
-
-  const scrollbarWidth = div.offsetWidth - div.clientWidth;
-
-  document.body.removeChild(div);
-
-  return scrollbarWidth;
-}
