@@ -7,6 +7,7 @@ function Modal(option = {}) {
   const { 
     templateId, 
     destroyOnClose = true, 
+    footer = false,
     cssClass = [], 
     closeMethod = ['button', 'overlay', 'escape'],
     onOpen,
@@ -42,7 +43,7 @@ function Modal(option = {}) {
 
     getScrollbarWidth.value = scrollbarWidth;
     return scrollbarWidth;
-  }
+  };
 
   this._build = () => {
     const content = template.content.cloneNode(true);
@@ -79,9 +80,25 @@ function Modal(option = {}) {
     // Append content and elements
     modalContent.append(content);
     container.append(modalContent);
+
+    if (footer) {
+      const modalFooter = document.createElement('div');
+      modalFooter.className = 'modal-footer';
+
+      if(this._footerContent) {
+        modalFooter.innerHTML = this._footerContent;
+      }
+
+      container.append(modalFooter);
+    }
+
     this._backdrop.append(container);
     document.body.append(this._backdrop);
-  }
+  };
+
+  this.setFooterContent = (html) => {
+    this._footerContent = html;
+  };
 
   this.open = () => {
     if(!this._backdrop) {
@@ -111,39 +128,49 @@ function Modal(option = {}) {
           this.close();
         }
       });
-    }
+    };
 
-    this._backdrop.ontransitionend = (event) => {
-      if(event.propertyName !== "transform") return;
+    this.ontransitionend(() => {
       if(typeof onOpen === "function") onOpen();
-    }
+    });
     
     return this._backdrop;
   };
 
-  this.close = (destroy = destroyOnClose) => {
-    this._backdrop.classList.remove("show");
+  this.ontransitionend = (callback) => {
     this._backdrop.ontransitionend = (event) => {
       if(event.propertyName !== "transform") return;
-      
-      if(this._backdrop && destroy) {
-        this._backdrop.remove();
-        this._backdrop = null;
-      }
 
-      // Enable scrolling
-      document.body.classList.remove("no-scroll");
-      document.body.style.paddingRight = "";
+      if(typeof callback === 'function') callback();
+    }
+  }
 
-      if(typeof onClose === "function") onClose();
-    };
+  this.close = (destroy = destroyOnClose) => {
+    if(!this._backdrop) return; // Guard: tránh lỗi khi backdrop đã null
+    
+    this._backdrop.classList.remove("show");
+
+   
+      this.ontransitionend(() => {
+        if(this._backdrop && destroy) {
+          this._backdrop.remove();
+          this._backdrop = null;
+        }
+
+        // Enable scrolling
+        document.body.classList.remove("no-scroll");
+        document.body.style.paddingRight = "";
+
+        if(typeof onClose === "function") onClose();
+      });
+    
   };
 
   this.destroy = () => {
     this.close(true);
-  }
+  };
 
-}
+};
 
 // modal12.open();
 // modal12.close();
@@ -175,7 +202,6 @@ $("#open-modal-1").onclick = () => {
 const modal2 = new Modal({
     templateId: "modal-2",
     destroyOnClose: true,
-    footer: true,
     cssClass: ["class1", "class2", "classN"],
     onOpen: () => {
         console.log("Modal 2 opened");
@@ -201,3 +227,19 @@ $("#open-modal-2").onclick = () => {
         };
     }
 };
+
+const modal3 = new Modal({
+    templateId: "modal-3",
+    destroyOnClose: true,
+    footer: true,
+    onOpen: () => {
+        console.log("Modal 3 opened");
+    },
+    onClose: () => {
+        console.log("Modal 3 closed");
+    },
+});
+
+modal3.setFooterContent("<h2>Footer content</h2>")
+
+modal3.open();

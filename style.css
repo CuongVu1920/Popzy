@@ -71,7 +71,7 @@ main {
     position: relative;
     width: min(600px, 90%);
     border-radius: 10px;
-    padding: 30px;
+    padding: 20px 20px 0 20px;
     background: #ffff;
     transform: scale(0);
     transition: transform 0.3s;
@@ -96,6 +96,11 @@ main {
 .modal-content {
   max-height: 80vh;
   overflow-y: auto;
+}
+
+.modal-footer {
+  padding: 20px 0;
+  background-color: aquamarine;
 }
 
 .no-scroll {
