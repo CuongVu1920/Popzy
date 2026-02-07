@@ -82,14 +82,14 @@ function Modal(option = {}) {
     container.append(modalContent);
 
     if (footer) {
-      const modalFooter = document.createElement('div');
-      modalFooter.className = 'modal-footer';
+      this._modalFooter = document.createElement('div');
+      this._modalFooter.className = 'modal-footer';
 
       if(this._footerContent) {
-        modalFooter.innerHTML = this._footerContent;
+        this._modalFooter.innerHTML = this._footerContent;
       }
 
-      container.append(modalFooter);
+      container.append(this._modalFooter);
     }
 
     this._backdrop.append(container);
@@ -98,6 +98,10 @@ function Modal(option = {}) {
 
   this.setFooterContent = (html) => {
     this._footerContent = html;
+
+    if(this._modalFooter) {
+      this._modalFooter.innerHTML = html;
+    }
   };
 
   this.open = () => {
@@ -155,6 +159,7 @@ function Modal(option = {}) {
         if(this._backdrop && destroy) {
           this._backdrop.remove();
           this._backdrop = null;
+          this._modalFooter = null;
         }
 
         // Enable scrolling
