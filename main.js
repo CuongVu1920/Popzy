@@ -116,7 +116,9 @@ function Modal(option = {}) {
 
   this.close = (destroy = destroyOnClose) => {
     this._backdrop.classList.remove("show");
-    this._backdrop.ontransitionend = () => {
+    this._backdrop.ontransitionend = (event) => {
+      if(event.propertyName !== "transform") return;
+      
       if(this._backdrop && destroy) {
         this._backdrop.remove();
         this._backdrop = null;
@@ -151,8 +153,8 @@ const modal1 = new Modal({
 $("#open-modal-1").onclick = () => {
     const modalElement = modal1.open();
 
-    const img = modalElement.querySelector("img");
-    console.log(img);
+    // const img = modalElement.querySelector("img");
+    // console.log(img);
 };
 
 const modal2 = new Modal({
@@ -181,7 +183,7 @@ $("#open-modal-2").onclick = () => {
                 password: $("#password").value.trim(),
             };
 
-            console.log(formData);
+            // console.log(formData);
         };
     }
 };
