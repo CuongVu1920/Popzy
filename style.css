@@ -99,8 +99,28 @@ main {
 }
 
 .modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
   padding: 20px 0;
-  background-color: aquamarine;
+}
+
+.modal-btn {
+  background-color: gray ;
+  color: white;
+  padding: 8px 20px;
+}
+
+.modal-btn.primary {
+  background: #377aad;
+}
+
+.modal-btn.danger {
+  background-color: tomato;
+}
+
+.modal-btn.pull-left {
+  margin-right: auto;
 }
 
 .no-scroll {

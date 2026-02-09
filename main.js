@@ -89,6 +89,10 @@ function Modal(option = {}) {
         this._modalFooter.innerHTML = this._footerContent;
       }
 
+      this._footerButtons.forEach(footerButton => {
+        this._modalFooter.append(footerButton);
+      })
+
       container.append(this._modalFooter);
     }
 
@@ -103,6 +107,17 @@ function Modal(option = {}) {
       this._modalFooter.innerHTML = html;
     }
   };
+
+  this._footerButtons = [];
+
+  this.addFooterButton = (title, cssClass, callback) => {
+    const button = document.createElement('button');
+    button.className = cssClass;
+    button.innerHTML = title;
+    button.onclick = callback;
+
+    this._footerButtons.push(button);
+  }
 
   this.open = () => {
     if(!this._backdrop) {
@@ -235,6 +250,7 @@ $("#open-modal-2").onclick = () => {
 
 const modal3 = new Modal({
     templateId: "modal-3",
+    closeMethod: [],
     destroyOnClose: true,
     footer: true,
     onOpen: () => {
@@ -245,6 +261,20 @@ const modal3 = new Modal({
     },
 });
 
-modal3.setFooterContent("<h2>Footer content</h2>")
+modal3.addFooterButton('Danger', 'modal-btn danger pull-left', (event) => {
+  modal3.close();
+});
+
+// modal3.setFooterContent("<h2>Footer content</h2>")
+modal3.addFooterButton('<span>Agree</span>', 'modal-btn primary', (event) => {
+  console.log("Something");
+  modal3.close();
+});
+
+
+modal3.addFooterButton('Cancle', 'modal-btn', (event) => {
+  modal3.close();
+});
+
 
 modal3.open();
