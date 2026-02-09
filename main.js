@@ -1,7 +1,7 @@
 const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
 
-
+Modal.elements = [];
 
 function Modal(option = {}) {
   const { 
@@ -120,6 +120,9 @@ function Modal(option = {}) {
   }
 
   this.open = () => {
+    Modal.elements.push(this);
+
+
     if(!this._backdrop) {
       this._build();
     }
@@ -142,11 +145,7 @@ function Modal(option = {}) {
     }
 
     if(this._allowEscapeClose) {
-      document.addEventListener('keydown', (event) => {
-        if(event.key === 'Escape') {
-          this.close();
-        }
-      });
+      document.addEventListener('keydown', this._handleEscapeKey);
     };
 
     this.ontransitionend(() => {
@@ -154,6 +153,14 @@ function Modal(option = {}) {
     });
     
     return this._backdrop;
+  };
+
+  this._handleEscapeKey = (event) => {
+    const lastModal = Modal.elements[Modal.elements.length - 1];
+
+        if(event.key === 'Escape' && this === lastModal) {
+          this.close();
+        }
   };
 
   this.ontransitionend = (callback) => {
@@ -165,10 +172,14 @@ function Modal(option = {}) {
   }
 
   this.close = (destroy = destroyOnClose) => {
-    if(!this._backdrop) return; // Guard: tránh lỗi khi backdrop đã null
+    // if(!this._backdrop) return; // Guard: tránh lỗi khi backdrop đã null
+    Modal.elements.pop();
     
     this._backdrop.classList.remove("show");
 
+    if (this._allowEscapeClose) {
+      document.removeEventListener('keydown', this._handleEscapeKey);
+    }
    
       this.ontransitionend(() => {
         if(this._backdrop && destroy) {
@@ -178,8 +189,10 @@ function Modal(option = {}) {
         }
 
         // Enable scrolling
-        document.body.classList.remove("no-scroll");
-        document.body.style.paddingRight = "";
+        if(Modal.elements.length === 0) {
+          document.body.classList.remove("no-scroll");
+          document.body.style.paddingRight = "";
+        };
 
         if(typeof onClose === "function") onClose();
       });
@@ -250,7 +263,7 @@ $("#open-modal-2").onclick = () => {
 
 const modal3 = new Modal({
     templateId: "modal-3",
-    closeMethod: [],
+    closeMethod: ['escape'],
     destroyOnClose: true,
     footer: true,
     onOpen: () => {
@@ -277,4 +290,6 @@ modal3.addFooterButton('Cancle', 'modal-btn', (event) => {
 });
 
 
-modal3.open();
+$("#open-modal-3").onclick = () => {
+    modal3.open();
+};
